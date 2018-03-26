@@ -1,0 +1,427 @@
+#include<iostream.h>
+#include<stdlib.h>
+#include<conio.h>
+#include<string.h>
+#include<math.h>
+#include<graphics.h>
+#include<dos.h>
+
+union REGS i,o;
+int x,y,x1,y1;
+char str[50];
+
+class calc
+{
+      int gm,gd;
+      double num1,num2,result;
+      char op;
+
+      public:
+
+       calc()
+      {
+       num1=0;
+       num2=0;
+       result=0;
+       strcpy(str,"");
+       op='\0';
+     }
+
+     void draw();
+     void run();
+     void calculate();
+     void convert_num();
+
+     int check(char ch)
+    {
+     int len=strlen(str);
+	for(int p=0;p<len;p++)
+      {
+	 if(ch==str[p])
+	{
+	 return(1);
+	}
+      }
+       return(0);
+    }
+     void clear()
+    {
+     strcpy(str,"");
+     cleardevice();
+     draw();
+    }
+
+};
+
+    void calc :: draw()
+	{
+		gd=DETECT;
+		initgraph(&gd,&gm,"c:\\tc\\bgi");
+		x=getmaxx();
+		y=getmaxy();
+		setcolor(11);
+		//----------------------------------------
+		settextstyle(8,0,0);
+		outtextxy(x/3-30,1,"CALCULATOR");
+		settextstyle(2,0,6);
+		outtextxy(x/2-200,y/2-170,"Press 'Clear' For New Calculations...!!!");
+		settextstyle(0,0,1);
+		//----------------------------------------
+		rectangle(x/2-170,y/2-120,x/2+110,y/3-10);
+		rectangle(x/2-170,y/3-10,x/2+110,y/2+80);
+		//-----------------------------------------
+		setbkcolor(17);
+		rectangle(x/2-160,y/3,x/2-130,y/3+30);
+		outtextxy(x/2-148,y/3+12,"1");
+		rectangle(x/2-120,y/3,x/2-90,y/3+30);
+		outtextxy(x/2-108,y/3+12,"2");
+		rectangle(x/2-80,y/3,x/2-50,y/3+30);
+		outtextxy(x/2-68,y/3+12,"3");
+		//------------------------------------------
+		rectangle(x/2-160,y/3+40,x/2-130,y/3+70);
+		outtextxy(x/2-148,y/3+52,"4");
+		rectangle(x/2-120,y/3+40,x/2-90,y/3+70);
+		outtextxy(x/2-108,y/3+52,"5");
+		rectangle(x/2-80,y/3+40,x/2-50,y/3+70);
+		outtextxy(x/2-68,y/3+52,"6");
+		//------------------------------------------
+		rectangle(x/2-160,y/3+80,x/2-130,y/3+110);
+		outtextxy(x/2-148,y/3+92,"7");
+		rectangle(x/2-120,y/3+80,x/2-90,y/3+110);
+		outtextxy(x/2-108,y/3+92,"8");
+		rectangle(x/2-80,y/3+80,x/2-50,y/3+110);
+		outtextxy(x/2-68,y/3+92,"9");
+		//------------------------------------------
+		rectangle(x/2-160,y/3+120,x/2-130,y/3+150);
+		outtextxy(x/2-148,y/3+132,".");
+		rectangle(x/2-120,y/3+120,x/2-90,y/3+150);
+		outtextxy(x/2-108,y/3+132,"0");
+		rectangle(x/2-80,y/3+120,x/2-50,y/3+150);
+		outtextxy(x/2-75,y/3+132,"+/-");
+		//-----------------------------------------
+		rectangle(x/2-40,y/3,x/2,y/3+30);
+		outtextxy(x/2-30,y/3+14,"x^2");
+		rectangle(x/2+10,y/3,x/2+50,y/3+30);
+		outtextxy(x/2+27,y/3+14,"%");
+		rectangle(x/2+60,y/3,x/2+100,y/3+30);
+		outtextxy(x/2+69,y/3+14,"CLR");
+		//-----------------------------------------
+		rectangle(x/2-40,y/3+40,x/2,y/3+70);
+		outtextxy(x/2-30,y/3+52,"x^3");
+		rectangle(x/2+10,y/3+40,x/2+50,y/3+70);
+		outtextxy(x/2+27,y/3+52,"*");
+		rectangle(x/2+60,y/3+40,x/2+100,y/3+70);
+		outtextxy(x/2+77,y/3+52,"/");
+	       //rectangle(x/2+110,y/3+40,x/2+150,y/3+70);
+	       //outtextxy(x/2+120,y/3+52,"x^3");
+		//-----------------------------------------
+		rectangle(x/2-40,y/3+80,x/2,y/3+110);
+		outtextxy(x/2-30,y/3+92,"x^y");
+		rectangle(x/2+10,y/3+80,x/2+50,y/3+110);
+		outtextxy(x/2+27,y/3+92,"+");
+		rectangle(x/2+60,y/3+80,x/2+100,y/3+110);
+		outtextxy(x/2+77,y/3+92,"-");
+	       //rectangle(x/2+110,y/3+80,x/2+150,y/3+110);
+	       //outtextxy(x/2+120,y/3+92,"x^y");
+		//-----------------------------------------
+		rectangle(x/2-40,y/3+120,x/2,y/3+150);
+		outtextxy(x/2-34,y/3+132,"SQRT");
+		rectangle(x/2+10,y/3+120,x/2+100,y/3+150);
+		outtextxy(x/2+53,y/3+132,"=");
+	       //----------------------------------------
+		rectangle(x-150,y-80,x-60,y-50);
+		outtextxy(x-150+30,y-80+12,"Close");
+	   i.x.ax=1;
+	   int86(0x33,&i,&o);
+	   x1=x/2-165;
+	   y1=y/2-100;
+	}
+
+       void calc :: run()
+    {
+	int button;
+	while(1)
+       {
+	i.x.ax=3;
+	int86(0x33,&i,&o);
+	button=o.x.bx&7;
+	 if(o.x.cx>=(x/2-160) && o.x.cx<=(x/2-130) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	  strcat(str,"1");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2-120) && o.x.cx<=(x/2-90) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	  strcat(str,"2");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2-80) && o.x.cx<=(x/2-50) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	  strcat(str,"3");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2-160) && o.x.cx<=(x/2-130) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  strcat(str,"4");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2-120) && o.x.cx<=(x/2-90) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  strcat(str,"5");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2-80) && o.x.cx<=(x/2-50) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  strcat(str,"6");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+
+	 if(o.x.cx>=(x/2-160) && o.x.cx<=(x/2-130) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  strcat(str,"7");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2-120) && o.x.cx<=(x/2-90) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  strcat(str,"8");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	if(o.x.cx>=(x/2-80) && o.x.cx<=(x/2-50) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  strcat(str,"9");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+       if(o.x.cx>=(x/2-120) && o.x.cx<=(x/2-90) && o.x.dx>=(y/3+120) &&  o.x.dx<=(y/3+150) && (button==1))
+	{
+	  strcat(str,"0");
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+       if(o.x.cx>=(x/2-160) && o.x.cx<=(x/2-130) && o.x.dx>=(y/3+120) &&  o.x.dx<=(y/3+150) && (button==1))
+	{
+	  int flag=check('.');
+	   if(flag==0)
+	  {
+	   strcat(str,".");
+	   outtextxy(x1,y1,str);
+	   sleep(1);
+	  }
+	}
+
+	if(o.x.cx>=(x-150) && o.x.cx<=(x-60) && o.x.dx>=(y-80) &&  o.x.dx<=(y-50) && (button==1))
+	{
+          //close button
+	  exit(0);
+	 }
+
+	// Operations
+
+	 if(o.x.cx>=(x/2-80) && o.x.cx<=(x/2-50) && o.x.dx>=(y/3+120) &&  o.x.dx<=(y/3+150) && (button==1))
+	{
+	  // +/-
+	  int flag=check('-');
+	   if(flag==0)
+	  {
+	    char *endptr;
+	    num1=strtod(str,&endptr);
+	    num1=(-num1);
+	    clear();
+	    gcvt(num1,10,str);
+	    outtextxy(x1,y1,str);
+	    sleep(1);
+	  }
+	}
+
+	 if(o.x.cx>=(x/2-40) && o.x.cx<=(x/2) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	 // x^2
+	  char *endptr;
+	  num1=strtod(str,&endptr);
+	  num1=(num1*num1);
+	  clear();
+	  gcvt(num1,10,str);
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2+10) && o.x.cx<=(x/2+50) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	  // %
+	  convert_num();
+	  op='%';
+	  sleep(1);
+	}
+
+	  if(o.x.cx>=(x/2+60) && o.x.cx<=(x/2+100) && o.x.dx>=(y/3) &&  o.x.dx<=(y/3+30) && (button==1))
+	{
+	  //clear
+	  clear();
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2-40) && o.x.cx<=(x/2) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  //x^3
+	  char *endptr;
+	  num1=strtod(str,&endptr);
+	  num1=(num1*num1*num1);
+	  clear();
+	  gcvt(num1,10,str);
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2+10) && o.x.cx<=(x/2+50) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  // *
+	  convert_num();
+	  op='*';
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2+60) && o.x.cx<=(x/2+100) && o.x.dx>=(y/3+40) &&  o.x.dx<=(y/3+70) && (button==1))
+	{
+	  //division
+	  convert_num();
+	  op='/';
+	  sleep(1);
+	 }
+
+	  if(o.x.cx>=(x/2-40) && o.x.cx<=(x/2) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  // x^y
+	  convert_num();
+	  op='^';
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2+10) && o.x.cx<=(x/2+50) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  // +
+	  convert_num();
+	  op='+';
+	  sleep(1);
+	}
+
+	 if(o.x.cx>=(x/2+60) && o.x.cx<=(x/2+100) && o.x.dx>=(y/3+80) &&  o.x.dx<=(y/3+110) && (button==1))
+	{
+	  // -
+	  convert_num();
+	  op='-';
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2-40) && o.x.cx<=(x/2) && o.x.dx>=(y/3+120) &&  o.x.dx<=(y/3+150) && (button==1))
+	{
+	  // sqrt
+	  char *endptr;
+	  num1=strtod(str,&endptr);
+	  num1=sqrt(num1);
+	  clear();
+	  gcvt(num1,10,str);
+	  outtextxy(x1,y1,str);
+	  sleep(1);
+	 }
+
+	 if(o.x.cx>=(x/2+10) && o.x.cx<=(x/2+100) && o.x.dx>=(y/3+120) &&  o.x.dx<=(y/3+150) && (button==1))
+	{
+	  // =
+	  calculate();
+	  sleep(1);
+	 }
+
+      }
+
+    }
+
+     void calc:: convert_num()
+  {
+    char *endptr;
+    num1=strtod(str,&endptr);
+    cleardevice();
+    draw();
+    strcpy(str,"");
+    outtextxy(x1,y1,str);
+  }
+
+   void calc:: calculate()
+  {
+     if(strcmp(str,""))
+    {
+     char *endptr;
+     num2=strtod(str,&endptr);
+
+    if(op=='+')
+     result=num1+num2;
+
+    else if(op=='-')
+     result=num1-num2;
+
+    else if(op=='*')
+     result=num1*num2;
+
+    else if(op=='/')
+    {
+     if(num2==0)
+     {
+      clear();
+      outtextxy(x1,y1,"Divide By Zero Error..!!");
+      goto exit;
+     }
+     else
+     {
+      result=num1/num2;
+     }
+    }
+
+    else if(op=='%')
+    {
+      int n1=num1,n2=num2;
+      result=n1%n2;
+    }
+
+    else if(op=='^')
+     {
+      result=num1;
+      for(int i=1;i<num2;i++)
+	result=result*num1;
+     }
+    clear();
+    gcvt(result,10,str);
+    outtextxy(x1,y1,str);
+    exit:
+   }
+  }
+
+
+
+void main()
+{
+
+	clrscr();
+	calc c1;
+	c1.draw();
+	c1.run();
+	getch();
+	closegraph();
+	restorecrtmode();
+}
